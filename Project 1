@@ -1,0 +1,346 @@
+package one;
+
+import java.util.ArrayList;
+
+import java.util.List;
+
+import java.util.Scanner;
+
+
+
+class Task {
+
+    private String title;
+
+    private Priority priority;
+
+    private boolean isComplete;
+
+
+
+    public Task(String title, Priority priority) {
+
+        this.title = title;
+
+        this.priority = priority;
+
+        this.isComplete = false;
+
+    }
+
+
+
+    public String getTitle() {
+
+        return title;
+
+    }
+
+
+
+    public void setTitle(String title) {
+
+        this.title = title;
+
+    }
+
+
+
+    public Priority getPriority() {
+
+        return priority;
+
+    }
+
+
+
+    public void setPriority(Priority priority) {
+
+        this.priority = priority;
+
+    }
+
+
+
+    public boolean isComplete() {
+
+        return isComplete;
+
+    }
+
+
+
+    public void setComplete(boolean complete) {
+
+        isComplete = complete;
+
+    }
+
+
+
+    public void markComplete() {
+
+        this.isComplete = true;
+
+    }
+
+
+
+    @Override
+
+    public String toString() {
+
+        String status = isComplete ? "[X]" : "[ ]";
+
+        return status + " " + priority + " - " + title;
+
+    }
+
+}
+
+
+
+enum Priority {
+
+    HIGH,
+
+    MEDIUM,
+
+    LOW
+
+}
+
+
+
+class TaskView {
+
+    public void displayTaskList(List<Task> tasks) {
+
+        System.out.println("Task List:");
+
+        if (tasks.isEmpty()) {
+
+            System.out.println("No tasks found.");
+
+        } else {
+
+            for (int i = 0; i < tasks.size(); i++) {
+
+                System.out.println((i + 1) + ". " + tasks.get(i));
+
+            }
+
+        }
+
+    }
+
+}
+
+
+
+class TaskController {
+
+    private List<Task> tasks;
+
+    private TaskView taskView;
+
+
+
+    public TaskController() {
+
+        this.tasks = new ArrayList<>();
+
+        this.taskView = new TaskView();
+
+    }
+
+
+
+    public void createTask(String title, Priority priority) {
+
+        Task task = new Task(title, priority);
+
+        tasks.add(task);
+
+    }
+
+
+
+    public void markTaskComplete(int taskIndex) {
+
+        if (isValidTaskIndex(taskIndex)) {
+
+            Task task = tasks.get(taskIndex - 1);
+
+            task.markComplete();
+
+        } else {
+
+            System.out.println("Invalid task index.");
+
+        }
+
+    }
+
+
+
+    public void displayTaskList() {
+
+        taskView.displayTaskList(tasks);
+
+    }
+
+
+
+    private boolean isValidTaskIndex(int taskIndex) {
+
+        return taskIndex >= 1 && taskIndex <= tasks.size();
+
+    }
+
+}
+
+
+
+public class TaskManagerApp {
+
+    private static Scanner scanner = new Scanner(System.in);
+
+    private static TaskController taskController = new TaskController();
+
+
+
+    public static void main(String[] args) {
+
+        boolean exit = false;
+
+
+
+        while (!exit) {
+
+            System.out.println("1. Create Task");
+
+            System.out.println("2. Mark Task as Complete");
+
+            System.out.println("3. View Task List");
+
+            System.out.println("4. Exit");
+
+            System.out.print("Enter your choice: ");
+
+
+
+            int choice = scanner.nextInt();
+
+            scanner.nextLine(); // Clear the newline character from the input
+
+
+
+            switch (choice) {
+
+                case 1:
+
+                    createTask();
+
+                    break;
+
+                case 2:
+
+                    markTaskAsComplete();
+
+                    break;
+
+                case 3:
+
+                    viewTaskList();
+
+                    break;
+
+                case 4:
+
+                    exit = true;
+
+                    break;
+
+                default:
+
+                    System.out.println("Invalid choice. Please try again.");
+
+                    break;
+
+            }
+
+        }
+
+    }
+
+
+
+    private static void createTask() {
+
+        System.out.print("Enter task title: ");
+
+        String title = scanner.nextLine();
+
+
+
+        System.out.print("Enter task priority (HIGH, MEDIUM, LOW): ");
+
+        String priorityString = scanner.nextLine();
+
+
+
+        Priority priority;
+
+        try {
+
+            priority = Priority.valueOf(priorityString.toUpperCase());
+
+        } catch (IllegalArgumentException e) {
+
+            System.out.println("Invalid priority value. Task not created.");
+
+            return;
+
+        }
+
+
+
+        taskController.createTask(title, priority);
+
+        System.out.println("Task created successfully.");
+
+    }
+
+
+
+    private static void markTaskAsComplete() {
+
+        taskController.displayTaskList();
+
+
+
+        System.out.print("Enter the task index to mark as complete: ");
+
+        int taskIndex = scanner.nextInt();
+
+        scanner.nextLine(); // Clear the newline character from the input
+
+
+
+        taskController.markTaskComplete(taskIndex);
+
+        System.out.println("Task marked as complete.");
+
+    }
+
+
+
+    private static void viewTaskList() {
+
+        taskController.displayTaskList();
+
+    }
+
+}
+
